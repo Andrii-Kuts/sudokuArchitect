@@ -1,0 +1,23 @@
+Line
+<split>
+A regular line.
+Purely cosmetic.
+<split>
+graphics/line.png
+<split>
+Rectangle
+<split>
+A regular rectangle.
+Purely cosmetic.
+<split>
+graphics/rectangle.png
+<split>
+Cell Clue
+<split>
+Used to indicate different
+cell properties.
+<split>
+graphics/cell_clue.png
+<split>
+end
+

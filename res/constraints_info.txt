@@ -1,0 +1,16 @@
+Unique Line
+<split>
+Digits on unique
+line could not repeat.
+<split>
+constraints/unique_line.png
+<split>
+Unique Rectangle
+<split>
+Digits inside
+unique rectangle
+could not repeat.
+<split>
+constraints/unique_rectangle.png
+<split>
+end
