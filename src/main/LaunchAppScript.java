@@ -6,6 +6,7 @@ public class LaunchAppScript
     {
         FileLoader.getInstance().LoadFonts();
         System.setProperty("sun.java2d.opengl", "true");
-        Window window = new Window(640, 360, false, "Sudoku Architect");
+        UserSettings settings = UserSettings.getInstance();
+        Window window = new Window(settings.GetScreenWidth(), settings.GetScreenHeight(), settings.GetFullscreen(), "Sudoku Architect");
     }
 }

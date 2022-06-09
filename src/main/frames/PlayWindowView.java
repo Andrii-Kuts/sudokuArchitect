@@ -2,6 +2,7 @@ package main.frames;
 
 import main.FileLoader;
 import main.ObjectsHandler;
+import main.UserSettings;
 import main.Window;
 import main.sudoku.Board;
 import main.sudoku.SudokuView;
@@ -52,6 +53,11 @@ public class PlayWindowView extends Canvas implements SudokuView {
     private boolean showTime = false;
     private MenuGroup menuSettings;
 
+    MenuLabel titleLabel, authorLabel, ruleSetLabel;
+    MenuScrollWindow ruleSetWindow;
+
+    private boolean settingsAntialias = true;
+
     public PlayWindowView(PlayWindow pres, Window window, int width, int height)
     {
         this.pres = pres;
@@ -67,9 +73,44 @@ public class PlayWindowView extends Canvas implements SudokuView {
         style.SetSize(width, height);
         style.GenerateShapes();
         style.SetHandler(handler);
-        background = fileLoader.ReadImage("background.jpg").getScaledInstance(width, height, 0);
+        settingsAntialias = UserSettings.getInstance().GetAntialias();
+        background = fileLoader.LoadBackground().getScaledInstance(width, height, 0);
 
-        UITransform transform = style.GetTransform(new UITransform(600, 0, 0, 0), Style.Anchor.Center);
+        titleLabel = new MenuLabel(style.GetPoint(new Point2D.Double(600-50, -400), Style.Anchor.Center));
+        titleLabel.SetAlignment(MenuLabel.Alignment.Upper_Left);
+        titleLabel.SetColor(style.GetColor(Style.ColorPalette.Body3.value+2));
+        titleLabel.SetFont(style.GetFont(7));
+        titleLabel.SetText("");
+        titleLabel.SetVisibility(false);
+        handler.AddObject(titleLabel);
+
+        authorLabel = new MenuLabel(style.GetPoint(new Point2D.Double(600-50, -400+40), Style.Anchor.Center));
+        authorLabel.SetAlignment(MenuLabel.Alignment.Upper_Left);
+        authorLabel.SetColor(style.GetColor(Style.ColorPalette.Body3.value+1));
+        authorLabel.SetFont(style.GetFont(8));
+        authorLabel.SetText("");
+        authorLabel.SetVisibility(false);
+        handler.AddObject(authorLabel);
+
+        ruleSetWindow = new MenuScrollWindow(style.GetTransform(new UITransform(600+300/2-25, -100, 350, 400), Style.Anchor.Center));
+        ruleSetWindow.SetColors(style.GetColor(Style.ColorPalette.Body2.value-2), style.GetColor(Style.ColorPalette.Body1.value-2));
+        ruleSetWindow.SetPadding(style.GetScaled(5.0));
+        ruleSetWindow.SetRoundness(style.GetScaled(10.0));
+        MenuScroller scroller = ruleSetWindow.GetScroller();
+        scroller.SetColor(style.GetColor(Style.ColorPalette.Body2.value+1));
+        scroller.GetDrag().SetColor(style.GetColor(Style.ColorPalette.Body2.value-1));
+        ruleSetWindow.SetScrollThickness(style.GetScaled(20.0));
+        ruleSetWindow.SetVisibility(false);
+        handler.AddObject(ruleSetWindow);
+
+        ruleSetLabel = new MenuLabel(style.GetPoint(new Point2D.Double(610-50, -295), Style.Anchor.Center));
+        ruleSetLabel.SetAlignment(MenuLabel.Alignment.Upper_Left);
+        ruleSetLabel.SetColor(style.GetColor(Style.ColorPalette.Body1.value+2));
+        ruleSetLabel.SetFont(style.GetFont(5));
+        ruleSetLabel.SetText("");
+        ruleSetWindow.AddObject(ruleSetLabel);
+
+        UITransform transform = style.GetTransform(new UITransform(600, 300, 0, 0), Style.Anchor.Center);
         double digitsSize = style.GetScaled(70), posX = transform.x, posY = transform.y, pad = style.GetScaled(5);
 
         digitButtons = new MenuButton[11];
@@ -86,6 +127,7 @@ public class PlayWindowView extends Canvas implements SudokuView {
                 style.SetButtonColors(digitButtons[index], 0);
                 digitButtons[index].SetTextStyle(style.GetFont(1));
                 digitButtons[index].SetText(String.valueOf(digitButtonNames.charAt(index)));
+                digitButtons[index].SetBetterDraw(true);
                 int finalIndex = index;
                 if(index < 10)
                     digitButtons[index].SetAction(() -> pres.PressNumpad((finalIndex +1)%10), 0);
@@ -105,6 +147,7 @@ public class PlayWindowView extends Canvas implements SudokuView {
             style.SetButtonColors(modeButtons[x], 2);
             modeButtons[x].SetTextStyle(style.GetFont(1));
             modeButtons[x].SetText(String.valueOf(modeNames.charAt(x)));
+            modeButtons[x].SetBetterDraw(true);
             handler.AddObject(modeButtons[x]);
         }
         modeButtons[0].SetAction(() -> pres.SelectMode(PlayWindow.NumpadMode.Digit), 0);
@@ -115,7 +158,7 @@ public class PlayWindowView extends Canvas implements SudokuView {
         MenuButton menuButton;
         menuButton = new MenuButton(style.GetTransform(new UITransform(70, 30, 120, 40), Style.Anchor.Upper_Left),
                 style.GetScaled(10.0));
-        style.SetButtonColors(menuButton, 4);
+        style.SetButtonColors(menuButton, 1);
         menuButton.SetText("Menu");
         menuButton.SetTextStyle(style.GetFont(5));
         menuButton.SetAction(() -> pres.MainMenu(), 0);
@@ -173,6 +216,7 @@ public class PlayWindowView extends Canvas implements SudokuView {
         style.SetButtonColors(startButton, 4);
         startButton.SetText("Start");
         startButton.SetTextStyle(style.GetFont(1));
+        startButton.SetBetterDraw(true);
         startButton.SetRenderPriority(65);
         startButton.SetAction(() -> pres.Start(), 0);
         handler.AddObject(startButton);
@@ -188,6 +232,12 @@ public class PlayWindowView extends Canvas implements SudokuView {
             return;
         }
         Graphics g = bs.getDrawGraphics();
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                (settingsAntialias)? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF));
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g.drawImage(background, 0, 0, null);
 
         handler.Render(g);
@@ -298,6 +348,13 @@ public class PlayWindowView extends Canvas implements SudokuView {
 
     //endregion
 
+    public void SetGeneralInfo(String title, String author, String ruleSet)
+    {
+        titleLabel.SetText(title);
+        authorLabel.SetText("by: " + author);
+        ruleSetLabel.SetText(ruleSet);
+        ruleSetWindow.SetObjectsHeight(ruleSetLabel.GetHeight()+style.GetScaled(10.0));
+    }
     public void Start()
     {
         handler.RemoveObject(startPanel);
@@ -305,6 +362,10 @@ public class PlayWindowView extends Canvas implements SudokuView {
         timerLabel.SetVisibility(true);
         checkButton.SetVisibility(true);
         menuSettings.SetVisible(true);
+        titleLabel.SetVisibility(true);
+        authorLabel.SetVisibility(true);
+        ruleSetLabel.SetVisibility(true);
+        ruleSetWindow.SetVisibility(true);
         timerStart = System.currentTimeMillis();
         showTime = true;
     }
@@ -476,6 +537,11 @@ public class PlayWindowView extends Canvas implements SudokuView {
         lowGraphics = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         topGraphics = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics g = lowGraphics.getGraphics();
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         boolean f = false;
         for(RenderObject ro : graphics)
         {
@@ -483,6 +549,11 @@ public class PlayWindowView extends Canvas implements SudokuView {
             {
                 g.dispose();
                 g = topGraphics.getGraphics();
+                g2d = (Graphics2D)g;
+                g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+                g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
                 f = true;
             }
             ro.Render(g);
@@ -561,11 +632,6 @@ public class PlayWindowView extends Canvas implements SudokuView {
         if(x < 0 || y < 0 || x >= dimensionX || y >= dimensionY)
             return null;
         return cells[x][y];
-    }
-
-    public MenuButton GetModeButton(int index)
-    {
-        return modeButtons[index];
     }
 
     //endregion

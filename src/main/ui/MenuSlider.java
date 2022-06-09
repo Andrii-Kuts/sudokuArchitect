@@ -15,6 +15,10 @@ public class MenuSlider extends RenderObject implements Button, DragHost
     private DragCircle square;
     private Consumer<Double> action;
 
+    private Line2D line;
+    private Stroke stroke;
+    private Ellipse2D.Double dot1, dot2;
+
     public MenuSlider(double pos1x, double pos1y, double pos2x, double pos2y)
     {
         this.pos1x = pos1x;
@@ -31,6 +35,11 @@ public class MenuSlider extends RenderObject implements Button, DragHost
         square = new DragCircle();
         square.SetHost(this);
         ChangePos(0, 0);
+
+        line = new Line2D.Double(pos1x, pos1y, pos2x, pos2y);
+        stroke = new BasicStroke((float)thickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+        dot1 = new Ellipse2D.Double(pos1x-circleSize/2.0, pos1y-circleSize/2.0, circleSize, circleSize);
+        dot2 = new Ellipse2D.Double(pos2x-circleSize/2.0, pos2y-circleSize/2.0, circleSize, circleSize);
     }
 
     public void SetPosition(double pos1x, double pos1y, double pos2x, double pos2y)
@@ -39,12 +48,18 @@ public class MenuSlider extends RenderObject implements Button, DragHost
         this.pos1y = pos1y;
         this.pos2x = pos2x;
         this.pos2y = pos2y;
+        line = new Line2D.Double(pos1x, pos1y, pos2x, pos2y);
+        dot1 = new Ellipse2D.Double(pos1x-circleSize/2.0, pos1y-circleSize/2.0, circleSize, circleSize);
+        dot2 = new Ellipse2D.Double(pos2x-circleSize/2.0, pos2y-circleSize/2.0, circleSize, circleSize);
         UpdateVectors();
     }
     public void SetThickness(double lineThickness, double dotsSize)
     {
         thickness = lineThickness;
         circleSize = dotsSize;
+        stroke = new BasicStroke((float)thickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+        dot1 = new Ellipse2D.Double(pos1x-circleSize/2.0, pos1y-circleSize/2.0, circleSize, circleSize);
+        dot2 = new Ellipse2D.Double(pos2x-circleSize/2.0, pos2y-circleSize/2.0, circleSize, circleSize);
     }
     public void SetColor(Color color)
     {
@@ -113,17 +128,12 @@ public class MenuSlider extends RenderObject implements Button, DragHost
     }
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Line2D line = new Line2D.Double(pos1x, pos1y, pos2x, pos2y);
-        Stroke stroke = new BasicStroke((float)thickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+
         g2d.setStroke(stroke);
         g2d.setColor(color);
         g2d.draw(line);
-
-        Ellipse2D.Double dot1 = new Ellipse2D.Double(pos1x-circleSize/2.0, pos1y-circleSize/2.0, circleSize, circleSize);
         g2d.fill(dot1);
-        Ellipse2D.Double dot2 = new Ellipse2D.Double(pos2x-circleSize/2.0, pos2y-circleSize/2.0, circleSize, circleSize);
         g2d.fill(dot2);
 
         square.Render(g);

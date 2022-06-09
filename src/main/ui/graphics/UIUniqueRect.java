@@ -102,8 +102,6 @@ public class UIUniqueRect extends RenderObject implements UIConstraint{
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
         double szx = pos2x-pos1x, szy = pos2y-pos1y;
         RoundRectangle2D.Double rect = new RoundRectangle2D.Double(pos1x, pos1y, szx, szy, roundness, roundness);
         g2d.setColor(color);

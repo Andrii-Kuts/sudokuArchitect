@@ -14,6 +14,8 @@ public class MenuScrollWindow extends ObjectsHandler
 
     private double offset;
 
+    private RoundRectangle2D.Double rect, rect2;
+
     public MenuScrollWindow(double x, double y, double width, double height)
     {
         super();
@@ -28,6 +30,10 @@ public class MenuScrollWindow extends ObjectsHandler
         backColor = new Color(116, 116, 116);
         frontColor = new Color(255, 255, 255);
         objectsHeight = height;
+
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
+        rect2 = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
+                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
     }
     public MenuScrollWindow(UITransform transform)
     {
@@ -41,18 +47,28 @@ public class MenuScrollWindow extends ObjectsHandler
         sizeX = width;
         sizeY = height;
         scroller.SetPosition(x+width/2.0-scrollThickness/2.0, y, scrollThickness, sizeY);
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
+        rect2 = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
+                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
     }
     public void SetRoundness(double value)
     {
         roundness = value;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
+        rect2 = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
+                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
     }
     public void SetPadding(double value){
         padding = value;
+        rect2 = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
+                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
     }
     public void SetScrollThickness(double thickness)
     {
         scrollThickness = thickness;
         scroller.SetPosition(posX+sizeX/2.0-scrollThickness/2.0, posY, scrollThickness, sizeY);
+        rect2 = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
+                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
     }
     private void setOffset(double offset)
     {
@@ -82,16 +98,14 @@ public class MenuScrollWindow extends ObjectsHandler
     public void Render(Graphics g)
     {
         Graphics2D g2d = (Graphics2D)g;
-        RoundRectangle2D.Double rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
         g2d.setColor(backColor);
         g2d.fill(rect);
-        rect = new RoundRectangle2D.Double(posX-sizeX/2.0+padding, posY-sizeY/2.0+padding,
-                sizeX-padding*2.0-scrollThickness, sizeY-padding*2.0, roundness, roundness);
+
         g2d.setColor(frontColor);
-        g2d.fill(rect);
+        g2d.fill(rect2);
         scroller.Render(g);
         Shape oldClip = g2d.getClip();
-        g2d.clip(rect);
+        g2d.clip(rect2);
         g2d.transform(AffineTransform.getTranslateInstance(0, -offset));
         super.Render(g);
         g2d.transform(AffineTransform.getTranslateInstance(0, offset));

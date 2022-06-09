@@ -115,6 +115,10 @@ public class MenuLabel extends RenderObject {
         this.alignment = alignment;
     }
 
+    public double GetHeight()
+    {
+        return height;
+    }
     public Point2D.Double GetCarrotPosition(int index)
     {
         if(text == null || text.equals("") || index == 0)
@@ -180,8 +184,6 @@ public class MenuLabel extends RenderObject {
     @Override
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
         if(text == null || text.equals(""))
             return;

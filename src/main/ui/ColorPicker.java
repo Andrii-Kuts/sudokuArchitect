@@ -111,13 +111,13 @@ public class ColorPicker extends RenderObject implements Button
         Graphics2D g2d = (Graphics2D)g;
         if (drawX)
         {
-            Rectangle rect = new Rectangle(posX+selX-1, posY, 2, height);
+            Rectangle rect = new Rectangle(posX+selX-1, posY, 1, height);
             g2d.setColor(new Color(0, 0, 0));
             g2d.fill(rect);
         }
         if (drawY)
         {
-            Rectangle rect = new Rectangle(posX, posY+selY-1, width, 2);
+            Rectangle rect = new Rectangle(posX, posY+selY-1, width, 1);
             g2d.setColor(new Color(0, 0, 0));
             g2d.fill(rect);
         }

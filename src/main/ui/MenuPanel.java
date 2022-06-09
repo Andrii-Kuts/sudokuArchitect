@@ -9,6 +9,8 @@ public class MenuPanel extends RenderObject implements Button {
     private Color color, backgroundColor;
     private boolean isPanel;
 
+    private RoundRectangle2D.Double rect;
+
     public MenuPanel(double x, double y, double width, double height) {
         posX = x;
         posY = y;
@@ -23,6 +25,8 @@ public class MenuPanel extends RenderObject implements Button {
         this.width = 1920;
         this.height = 1080;
         isPanel = false;
+
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
     }
 
     public MenuPanel() {
@@ -39,6 +43,7 @@ public class MenuPanel extends RenderObject implements Button {
         posY = y;
         sizeX = width;
         sizeY = height;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
     }
 
     public void SetTransform(UITransform transform) {
@@ -46,10 +51,12 @@ public class MenuPanel extends RenderObject implements Button {
         posY = transform.y;
         sizeX = transform.width;
         sizeY = transform.height;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
     }
 
     public void SetRoundness(double value) {
         roundness = value;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
     }
 
     public void SetColor(Color color){
@@ -93,14 +100,12 @@ public class MenuPanel extends RenderObject implements Button {
     public void Render(Graphics g)
     {
         Graphics2D g2d = (Graphics2D)g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if(isPanel)
         {
             g2d.setColor(backgroundColor);
             g2d.fillRect(0, 0, width, height);
         }
-        RoundRectangle2D.Double rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
         g2d.setColor(color);
         g2d.fill(rect);
     }

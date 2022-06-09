@@ -8,6 +8,7 @@ import main.sudoku.Board;
 import main.sudoku.Cell;
 import main.sudoku.SudokuController;
 import main.ui.MenuButton;
+import main.ui.Style;
 import main.ui.UICell;
 
 import java.awt.*;
@@ -72,14 +73,13 @@ public class PlayWindow implements WindowFrame, SudokuController
                 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
         SelectMode(NumpadMode.Digit);
-        MenuButton button = view.GetModeButton(numpadMode.code);
-        button.SetColors(MenuButton.ButtonColor.Selected);
 
         showConstraintStatus = ConstraintShowMode.ShowWrong;
 
         ConstructBoard();
         if(filePath != null)
             LoadBoard(filePath);
+        view.SetGeneralInfo(board.GetTitle(), board.GetAuthor(), board.GetRuleSet());
     }
 
     public Canvas getFrame()

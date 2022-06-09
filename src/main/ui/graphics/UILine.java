@@ -54,8 +54,6 @@ public class UILine extends RenderObject {
     {
         Graphics2D g2d = (Graphics2D)g;
 
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
         g2d.setColor(color);
         Line2D line = new Line2D.Double(pos1x, pos1y, pos2x, pos2y);
         Stroke stroke = new BasicStroke((float)thickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);

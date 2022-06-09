@@ -10,8 +10,13 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileLoader
 {
@@ -110,18 +115,35 @@ public class FileLoader
     public void LoadFonts()
     {
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL url = classLoader.getResource("fonts");
-            String path = url.getPath();
-            File[] fonts = new File(path).listFiles();
-            for (File file : fonts)
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("fonts");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            String name;
+            int cnt = 0;
+            while((name = reader.readLine()) != null)
             {
-                LoadFont(file.getName());
+                cnt++;
+                LoadFont(name);
             }
+            if(cnt == 0)
+                throw new Exception();
+            return;
         }
         catch (Exception e)
         {
-            System.err.println("Something went wrong while loading fonts");
+            System.err.println("Something went wrong while loading fonts from folder. Loading from fonts.txt now.");
+        }
+        try {
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("fonts.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            String name;
+            while ((name = reader.readLine()) != null) {
+                LoadFont(name);
+            }
+            return;
+        }
+        catch (Exception e)
+        {
+            System.err.println("Something went wrong while loading fonts from fonts.txt. Giving up");
             e.printStackTrace();
         }
     }
@@ -129,22 +151,50 @@ public class FileLoader
     public String[] GetSudokuPresets()
     {
         try {
-            ArrayList<String> res = new ArrayList<>();
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL url = classLoader.getResource("presets");
-            String path = url.getPath();
-            File[] presets = new File(path).listFiles();
-            for (File file : presets)
+            ArrayList<String> paths = new ArrayList<>();
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("presets");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            String name;
+            while((name = reader.readLine()) != null)
             {
-                res.add(file.getPath());
+                URL res = getClass().getClassLoader().getResource("presets/" + name);
+                File file = Paths.get(res.toURI()).toFile();
+                paths.add(file.getAbsolutePath());
             }
-            return res.toArray(String[]::new);
+            if(paths.isEmpty())
+                throw new Exception();
+            return paths.toArray(String[]::new);
         }
         catch (Exception e)
         {
-            System.err.println("Something went wrong while loading fonts");
+            System.err.println("Something went wrong while loading sudoku presets from folder. Reading from presets.txt.");
+        }
+        try {
+            ArrayList<String> paths = new ArrayList<>();
+            File folder = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            String path = folder.getPath()+ File.separator+"Presets";
+            folder = new File(path);
+            for(File file : folder.listFiles())
+            {
+                if(file.getName().endsWith(".saf"))
+                    paths.add(file.getAbsolutePath());
+            }
+
+            if(paths.isEmpty())
+                throw new Exception();
+            return paths.toArray(String[]::new);
+        }
+        catch (Exception e)
+        {
+            System.err.println("Something went wrong while loading sudoku presets from folder. Reading from presets.txt.");
             e.printStackTrace();
             return null;
         }
+    }
+
+    public BufferedImage LoadBackground()
+    {
+        String path = "background" + UserSettings.getInstance().GetColorPalette() + ".png";
+        return ReadImage(path);
     }
 }

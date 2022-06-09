@@ -12,6 +12,8 @@ public class MenuConstraint extends RenderObject implements Button{
     private MenuLabel nameLabel;
     private MenuButton editButton, toggleButton, deleteButton;
 
+    private RoundRectangle2D.Double rect;
+
     public MenuConstraint(double x, double y, double width, double height)
     {
         posX = x;
@@ -21,6 +23,7 @@ public class MenuConstraint extends RenderObject implements Button{
         color = new Color(0, 0, 0);
 
         roundness = 10.0;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
         padding = 5.0;
 
         nameLabel = new MenuLabel(x-width/2.0, y);
@@ -45,6 +48,7 @@ public class MenuConstraint extends RenderObject implements Button{
         posY = y;
         sizeX = width;
         sizeY = height;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
         nameLabel.SetPosition(posX-sizeX/2.0+padding, posY);
         editButton.SetTransform(x+width/2.0-height*2.5+padding, y, height-padding*2, height-padding*2);
         toggleButton.SetTransform(x+width/2.0-height*1.5, y, height-padding*2, height-padding*2);
@@ -63,6 +67,7 @@ public class MenuConstraint extends RenderObject implements Button{
     }
     public void SetRoundness(double value) {
         roundness = value;
+        rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
     }
     public void SetColor(Color color) {
         this.color = color;
@@ -92,7 +97,6 @@ public class MenuConstraint extends RenderObject implements Button{
     {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(color);
-        RoundRectangle2D.Double rect = new RoundRectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY, roundness, roundness);
         g2d.fill(rect);
 
         nameLabel.Render(g);

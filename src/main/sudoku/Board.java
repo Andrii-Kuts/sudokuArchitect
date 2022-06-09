@@ -110,6 +110,93 @@ public class Board
         }
     }
 
+    public void LoadSamurai()
+    {
+        width = height = 21;
+        title = "New Sudoku";
+        author = "Jajceslav";
+        cells = new Cell[width][height];
+        for(int i = 0; i < width; i++)
+        {
+            for(int j = 0; j < height; j++)
+            {
+                cells[i][j] = new Cell();
+                cells[i][j].SetType(Cell.CellType.Outside);
+            }
+        }
+        constraints = new ArrayList<>();
+        graphics = new ArrayList<>();
+        constraintsGraphics = new ArrayList<>();
+        int[] dx = new int[]{0, 0, 6, 12, 12};
+        int[] dy = new int[]{0, 12, 6, 0, 12};
+        for(int ind = 0; ind < 5; ind++) {
+            int DX = dx[ind], DY = dy[ind];
+            for(int i = 0; i < 9; i++)
+            {
+                for(int j = 0; j < 9; j++)
+                {
+                    cells[DX+i][DY+j].SetType(Cell.CellType.Regular);
+                }
+            }
+            Rect rect = new Rect(DX, DY, DX+9, DY+9);
+            rect.priority = -2;
+            rect.color = new Color(255, 255, 255);
+            graphics.add(rect);
+
+            for (int i = 0; i < 9; i++) {
+                UniqueSet us = new UniqueSet(this);
+                us.AddLine(new BoardPosition(DX+i, DY+0), new BoardPosition(DX+i, DY+8));
+                constraints.add(us);
+
+                UniqueLine uq = new UniqueLine(DX+i, DY, DX+i, DY+8);
+                uq.renderIdle = false;
+                uq.thickness = 4;
+                uq.priority = -1;
+                constraintsGraphics.add(uq);
+            }
+            for (int i = 0; i < 9; i++) {
+                UniqueSet us = new UniqueSet(this);
+                us.AddLine(new BoardPosition(DX, DY+i), new BoardPosition(DX+8, DY+i));
+                constraints.add(us);
+
+                UniqueLine uq = new UniqueLine(DX+0, DY+i, DX+8, DY+i);
+                uq.renderIdle = false;
+                uq.thickness = 4;
+                uq.priority = -1;
+                constraintsGraphics.add(uq);
+            }
+            for (int x = 0; x < 3; x++) {
+                for (int y = 0; y < 3; y++) {
+                    UniqueSet us = new UniqueSet(this);
+                    us.AddRectangle(new BoardPosition(DX+x * 3, DY+y * 3), new BoardPosition(DX+x * 3 + 2, DY+y * 3 + 2));
+                    constraints.add(us);
+
+                    UniqueRect ur = new UniqueRect(DX+x * 3, DY+y * 3, DX+x * 3 + 2, DY+y * 3 + 2);
+                    ur.priority = 1;
+                    ur.color = new Color(0, 0, 0, 0);
+                    ur.okColor = new Color(0, 200, 0, 80);
+                    ur.wrongColor = new Color(200, 0, 0, 80);
+                    constraintsGraphics.add(ur);
+                }
+            }
+            for (int i = 0; i <= 9; i++) {
+                double thickness = 2;
+                if (i % 3 == 0)
+                    thickness = 5.0;
+
+                Line line = new Line(DX+i, DY+0, DX+i, DY+9);
+                line.priority = 2;
+                line.thickness = thickness;
+                graphics.add(line);
+
+                line = new Line(DX+0, DY+i, DX+9, DY+i);
+                line.priority = 2;
+                line.thickness = thickness;
+                graphics.add(line);
+            }
+        }
+    }
+
     public void CreateNew(int dimX, int dimY)
     {
         width = dimX;

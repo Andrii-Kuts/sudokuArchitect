@@ -3,6 +3,7 @@ package main.ui;
 import main.FileLoader;
 import main.ObjectsHandler;
 import main.ParameterHolder;
+import main.UserSettings;
 import main.ui.graphics.UIImage;
 
 import java.awt.*;
@@ -129,7 +130,7 @@ public class Style {
     public int[][] ButtonColorSets =
     {
         {
-            ColorPalette.Body2.value+ColorPalette.Light.value,
+            ColorPalette.Body2.value+ColorPalette.SemiLight.value,
             ColorPalette.Body1.value+ColorPalette.Dark.value
         },
         {
@@ -137,7 +138,7 @@ public class Style {
             ColorPalette.Body1.value+ColorPalette.Light.value
         },
         {
-            ColorPalette.Body3.value+ColorPalette.Light.value,
+            ColorPalette.Body3.value+ColorPalette.SemiLight.value,
             ColorPalette.Body1.value+ColorPalette.Dark.value
         },
         {
@@ -151,11 +152,23 @@ public class Style {
         {
             ColorPalette.Accent2.value+ColorPalette.SemiLight.value,
             ColorPalette.Body1.value+ColorPalette.Dark.value
+        },
+        {
+            ColorPalette.Body2.value+ColorPalette.Dark.value,
+            ColorPalette.Body1.value+ColorPalette.Light.value
+        },
+        {
+            ColorPalette.Body3.value+ColorPalette.Dark.value,
+            ColorPalette.Body1.value+ColorPalette.Light.value
+        },
+        {
+            ColorPalette.Accent2.value+ColorPalette.Medium.value,
+            ColorPalette.Body1.value+ColorPalette.Light.value
         }
     };
     public void LoadPalette(FileLoader loader)
     {
-        BufferedImage palette = loader.ReadImage("palette.png");
+        BufferedImage palette = loader.ReadImage("palette" + UserSettings.getInstance().GetColorPalette() + ".png");
         int width = palette.getWidth(null), height = palette.getHeight(null);
         colors = new Color[width*height];
         int ind = 0;
@@ -172,8 +185,8 @@ public class Style {
     //region Fonts
     public static Font[] fonts =
     {
-            new Font("Franklin Gothic Book", Font.PLAIN, 48),
-            new Font("Century Gothic", Font.PLAIN, 48),
+            new Font("Franklin Gothic Book", Font.PLAIN, 40),
+            new Font("Century Gothic", Font.PLAIN, 40),
             new Font("Franklin Gothic Book", Font.PLAIN, 54),
             new Font("Franklin Gothic Book", Font.ITALIC, 40),
             new Font("Century Gothic", Font.PLAIN, 25),
@@ -443,7 +456,7 @@ public class Style {
     private InputFieldPreset[] inputFieldPresets = new InputFieldPreset[]
     {
             new InputFieldPreset(20.0, 5, 0.5, 0.4,
-                    ColorPalette.Body2.value-2, 1, ColorPalette.Body2.value+2, 0, 3)
+                    ColorPalette.Body1.value-2, 0, ColorPalette.Body2.value+2, 0, 3)
     };
     public void SetInputField(MenuInputField field, double height, int index) {
         InputFieldPreset preset = inputFieldPresets[index];
@@ -504,7 +517,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 30.0;
 
@@ -621,7 +634,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 30;
 
@@ -700,7 +713,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 30.0;
 
@@ -760,7 +773,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 30.0;
 
@@ -819,7 +832,7 @@ public class Style {
     public MenuParameter<Point> GetPointParameter(ParameterHolder<Point> parameter, Point2D.Double gridPosition, Point2D.Double cellSize,  Point gridSize)
     {
         DragPoint rect = new DragPoint();
-        rect.SetSize(15, 15);
+        rect.SetSize(GetScaled(20.0), GetScaled(20.0));
         rect.SetColor(GetColor(ColorPalette.Body1.value+2));
         rect.SetColors(GetColor(ColorPalette.Body1.value-2), GetColor(ColorPalette.Body3.value-1), GetColor(ColorPalette.Body3.value));
         rect.SetThickness(GetScaled(4.0));
@@ -855,7 +868,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 30.0;
 
@@ -867,7 +880,7 @@ public class Style {
         MenuLabel toggleLabel = new MenuLabel(pos.x, pos.y);
         toggleLabel.SetAlignment(MenuLabel.Alignment.Left);
         toggleLabel.SetFont(GetFont(5));
-        toggleLabel.SetColor(GetColor(ColorPalette.Body3.value-1));
+        toggleLabel.SetColor(GetColor(ColorPalette.Body3.value));
         parameterYOffset += 40;
 
         MenuParameter<Boolean> param = new MenuParameter<Boolean>() {
@@ -975,7 +988,7 @@ public class Style {
         MenuLabel label = new MenuLabel(pos.x, pos.y);
         label.SetAlignment(MenuLabel.Alignment.Upper_Left);
         label.SetFont(GetFont(4));
-        label.SetColor(GetColor(ColorPalette.Body3.value-1));
+        label.SetColor(GetColor(ColorPalette.Body3.value));
         label.SetText(parameterName);
         parameterYOffset += 35.0;
 
@@ -1079,13 +1092,13 @@ public class Style {
         label.SetColor(GetColor(ColorPalette.Body2.value+2));
         label.SetText(name);
         MenuButton editButton = graphic.GetEditButton();
-        SetButtonColors(editButton, 0);
+        SetButtonColors(editButton, 1);
         editButton.SetRoundness(GetScaled(10.0));
         MenuButton toggleButton = graphic.GetToggleButton();
-        SetButtonColors(toggleButton, 0);
+        SetButtonColors(toggleButton, 1);
         toggleButton.SetRoundness(GetScaled(10.0));
         MenuButton deleteButton = graphic.GetDeleteButton();
-        SetButtonColors(deleteButton, 5);
+        SetButtonColors(deleteButton, 8);
         deleteButton.SetRoundness(GetScaled(10.0));
         return graphic;
     }
@@ -1098,16 +1111,16 @@ public class Style {
         constraint.SetPadding(GetScaled(5.0));
         MenuLabel label = constraint.GetLabel();
         label.SetFont(GetFont(5));
-        label.SetColor(GetColor(ColorPalette.Body1.value-2));
+        label.SetColor(GetColor(ColorPalette.Body3.value+2));
         label.SetText(name);
         MenuButton editButton = constraint.GetEditButton();
-        SetButtonColors(editButton, 2);
+        SetButtonColors(editButton, 3);
         editButton.SetRoundness(GetScaled(10.0));
         MenuButton toggleButton = constraint.GetToggleButton();
-        SetButtonColors(toggleButton, 2);
+        SetButtonColors(toggleButton, 3);
         toggleButton.SetRoundness(GetScaled(10.0));
         MenuButton deleteButton = constraint.GetDeleteButton();
-        SetButtonColors(deleteButton, 5);
+        SetButtonColors(deleteButton, 8);
         deleteButton.SetRoundness(GetScaled(10.0));
         return constraint;
     }

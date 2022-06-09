@@ -93,7 +93,6 @@ public class DragCircle extends RenderObject implements Button
     @Override
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         Ellipse2D.Double rect = new Ellipse2D.Double(posX-size/2.0, posY-size/2.0, size, size);
         g2d.setColor(color);

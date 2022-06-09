@@ -49,7 +49,6 @@ public class UIRect extends RenderObject {
     }
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         RoundRectangle2D.Double rect = new RoundRectangle2D.Double(posX - sizeX/2.0, posY - sizeY/2.0, sizeX, sizeY, roundness, roundness);
         g2d.setColor(color);

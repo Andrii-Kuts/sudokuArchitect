@@ -17,6 +17,8 @@ public class MenuScroller extends RenderObject implements Button, DragHost
     private DragRectangle square;
     private Consumer<Double> action;
 
+    private Rectangle2D.Double rect;
+
     public MenuScroller(double posX, double posY, double sizeX, double sizeY)
     {
         this.posX = posX;
@@ -36,6 +38,8 @@ public class MenuScroller extends RenderObject implements Button, DragHost
         square.SetHost(this);
         UpdateSize();
         ChangePos(0, 0);
+
+        rect = new Rectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY);
     }
     public MenuScroller()
     {
@@ -96,6 +100,7 @@ public class MenuScroller extends RenderObject implements Button, DragHost
         }
         UpdateVectors();
         ChangePos(0, 0);
+        rect = new Rectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY);
     }
     public void SetSize(double size)
     {
@@ -161,9 +166,7 @@ public class MenuScroller extends RenderObject implements Button, DragHost
     }
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Rectangle2D.Double rect = new Rectangle2D.Double(posX-sizeX/2.0, posY-sizeY/2.0, sizeX, sizeY);
         g2d.setColor(color);
         g2d.fill(rect);
 

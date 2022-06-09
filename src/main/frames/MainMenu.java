@@ -1,6 +1,7 @@
 package main.frames;
 
 import main.ParameterHolder;
+import main.UserSettings;
 import main.Window;
 import main.WindowFrame;
 import main.sudoku.Board;
@@ -31,6 +32,10 @@ public class MainMenu implements WindowFrame
 
     public MainMenu(int width, int height, Window window)
     {
+        this(width, height, window, false);
+    }
+    public MainMenu(int width, int height, Window window, boolean showSettings)
+    {
         this.window = window;
         model = new MainMenuModel();
         board = new Board(null);
@@ -51,7 +56,7 @@ public class MainMenu implements WindowFrame
                 return boardHeight;
             }
         };
-        view = new MainMenuView(this, window, width, height);
+        view = new MainMenuView(this, window, width, height, showSettings);
         endActions = new ArrayList<>();
 
         playFilePath = null;
@@ -272,5 +277,19 @@ public class MainMenu implements WindowFrame
 
     public void EditorWindow(boolean state) {
         view.EditWindow(state, editorPanel);
+    }
+
+    public void ApplySettings(int width, int height, boolean fullscreen, boolean antialias, int palette)
+    {
+        UserSettings settings = UserSettings.getInstance();
+        settings.SetScreenWidth(width);
+        settings.SetScreenHeight(height);
+        settings.SetFullscreen(fullscreen);
+        settings.SetAntialias(antialias);
+        settings.SetColorPalette(palette);
+
+        window.SetScreenSize(width, height);
+        window.SetFullscreen(fullscreen);
+        endActions.add(() -> window.ReloadMainMenu());
     }
 }

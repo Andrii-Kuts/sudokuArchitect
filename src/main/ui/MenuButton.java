@@ -3,6 +3,7 @@ package main.ui;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Random;
@@ -20,21 +21,38 @@ public class MenuButton extends RenderObject implements main.ui.Button
     private String text;
     private Font font;
     private Runnable[] action;
+    private boolean drawShadow = false;
+
+    private RoundRectangle2D.Double rect;
+    private Area rect2;
+    private FontRenderContext frc;
+    private TextLayout tx;
+    private int w, h;
+    private static final double cX = 0.045, cY = 0.045;
+
     public MenuButton(double x, double y, double width, double height, double round)
     {
         posX = x; posY = y;
         sizeX = width;
         sizeY = height;
         roundness = round;
+        double nx = posX - sizeX/2.0, ny = posY - sizeY/2.0;
+        rect = new RoundRectangle2D.Double(nx, ny, sizeX, sizeY, roundness, roundness);
+        rect2 = new Area(new RoundRectangle2D.Double(nx-sizeY*cX, ny-sizeY*cY, sizeX, sizeY, roundness, roundness));
+        rect2.intersect(new Area(rect));
 
         colorSpeed = 5.0;
         currentColor = new DoubleColor(0, 0, 0);
         destinationColor = new DoubleColor(0, 0, 0);
-        SetColors(ButtonColor.Default);
+        idleColor = new Color(255, 255, 255, 0);
+        hoverColor = new Color(0, 0, 0, 29);
+        pressColor = new Color(0, 0, 0, 92);
+        textColor = new Color(0, 0, 0);
         ResetColors();
 
         text = "";
         font = new Font("Arial", Font.PLAIN, 11);
+        recalculateTextLayout();
 
         action = new Runnable[3];
 
@@ -55,6 +73,10 @@ public class MenuButton extends RenderObject implements main.ui.Button
         posY = y;
         sizeX = width;
         sizeY = height;
+        double nx = posX - sizeX/2.0, ny = posY - sizeY/2.0;
+        rect = new RoundRectangle2D.Double(nx, ny, sizeX, sizeY, roundness, roundness);
+        rect2 = new Area(new RoundRectangle2D.Double(nx-sizeY*cX, ny-sizeY*cY, sizeX, sizeY, roundness, roundness));
+        rect2.intersect(new Area(rect));
     }
     public void SetTransform(UITransform transform)
     {
@@ -63,23 +85,10 @@ public class MenuButton extends RenderObject implements main.ui.Button
     public void SetRoundness(double value)
     {
         roundness = value;
-    }
-    public void SetColors(ButtonColor colors)
-    {
-        if(colors == ButtonColor.Default)
-        {
-            idleColor = new Color(192, 202, 220);
-            hoverColor = new Color(155, 163, 191);
-            pressColor = new Color(74, 107, 165);
-            textColor = new Color(20, 22, 42);
-        }
-        else if(colors == ButtonColor.Selected)
-        {
-            idleColor = new Color(27, 42, 92);
-            hoverColor = new Color(26, 39, 94);
-            pressColor = new Color(14, 34, 68);
-            textColor = new Color(200, 201, 219);
-        }
+        double x = posX - sizeX/2.0, y = posY - sizeY/2.0;
+        rect = new RoundRectangle2D.Double(x, y, sizeX, sizeY, roundness, roundness);
+        rect2 = new Area(new RoundRectangle2D.Double(x-sizeY*cX, y-sizeY*cY, sizeX, sizeY, roundness, roundness));
+        rect2.intersect(new Area(rect));
     }
     public void SetColors(Color[] colors)
     {
@@ -97,13 +106,32 @@ public class MenuButton extends RenderObject implements main.ui.Button
     {
         colorSpeed = value;
     }
+    public void SetBetterDraw(boolean state)
+    {
+        drawShadow = state;
+    }
+
+    private void recalculateTextLayout()
+    {
+        frc = new FontRenderContext(null, true, true);
+        if(text != null && text != "") {
+            tx = new TextLayout(text, font, frc);
+            w = tx.getPixelBounds(frc, 0f, 0f).width;
+            h = tx.getPixelBounds(frc, 0f, 0f).height;
+        } else
+        {
+            w = h = 0;
+        }
+    }
     public void SetText(String text)
     {
         this.text = text;
+        recalculateTextLayout();
     }
     public void SetTextStyle(Font font)
     {
         this.font = font;
+        recalculateTextLayout();
     }
     public void SetAction(Runnable action, int button)
     {
@@ -145,25 +173,18 @@ public class MenuButton extends RenderObject implements main.ui.Button
             col = idleColor;
         MoveColor(currentColor, col, colorSpeed*delta);
     }
+
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
-
-        double x = posX - sizeX/2.0, y = posY - sizeY/2.0;
-
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
-        RoundRectangle2D.Double rect = new RoundRectangle2D.Double(x, y, sizeX, sizeY, roundness, roundness);
         g2d.setColor(currentColor.get());
         g2d.fill(rect);
+        if(drawShadow) {
+            g2d.setColor(currentColor.get().brighter());
+            g2d.fill(rect2);
+        }
 
         if(text != "")
         {
-            FontRenderContext frc = new FontRenderContext(null, false, false);
-            TextLayout tx = new TextLayout(text, font, frc);
-            int w = tx.getPixelBounds(frc, 0f, 0f).width, h = tx.getPixelBounds(frc, 0f, 0f).height;
             g2d.setColor(textColor);
             g2d.setFont(font);
             g2d.drawString(text, (float)(posX - w / 2.0), (float)(posY + h / 2.0));

@@ -51,7 +51,6 @@ public class UISelector extends RenderObject
     @Override
     public void Render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
 
         Area rectSmall = new Area(new RoundRectangle2D.Double(posX - sizeX / 2.0, posY - sizeY / 2.0,
                 sizeX, sizeY, padding, padding) {

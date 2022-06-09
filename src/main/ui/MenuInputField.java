@@ -23,6 +23,8 @@ public class MenuInputField extends RenderObject implements Button
     private Runnable selectAction, deselectAction;
     private Function<Character, Boolean> checker;
 
+    private RoundRectangle2D.Double rect;
+
     public MenuInputField(double x, double y, double width, double height)
     {
         label = new MenuLabel(x-width/2.0, y);
@@ -49,6 +51,9 @@ public class MenuInputField extends RenderObject implements Button
         text = new StringBuilder("");
         carrotPosition = 0;
         checker = (c) -> (c >= 32 && c < 127);
+
+        rect = new RoundRectangle2D.Double(posX-(sizeX-thickness*2.0)/2.0, posY-(sizeY-thickness*2.0)/2.0,
+                sizeX-thickness*2.0, sizeY-thickness*2.0, roundness-thickness, roundness-thickness);
     }
 
     public MenuInputField()
@@ -76,6 +81,8 @@ public class MenuInputField extends RenderObject implements Button
         sizeY = height;
         button.SetTransform(x, y, width, height);
         label.SetPosition(x-width/2.0+thickness, y);
+        rect = new RoundRectangle2D.Double(posX-(sizeX-thickness*2.0)/2.0, posY-(sizeY-thickness*2.0)/2.0,
+                sizeX-thickness*2.0, sizeY-thickness*2.0, roundness-thickness, roundness-thickness);
     }
     public void SetTransform(UITransform transform)
     {
@@ -86,11 +93,15 @@ public class MenuInputField extends RenderObject implements Button
         this.thickness = thickness;
         labelPosX = posX-sizeX/2.0+thickness;
         label.SetPosition(labelPosX, posY);
+        rect = new RoundRectangle2D.Double(posX-(sizeX-thickness*2.0)/2.0, posY-(sizeY-thickness*2.0)/2.0,
+                sizeX-thickness*2.0, sizeY-thickness*2.0, roundness-thickness, roundness-thickness);
     }
     public void SetRoundness(double roundness)
     {
         this.roundness = roundness;
         button.SetRoundness(roundness);
+        rect = new RoundRectangle2D.Double(posX-(sizeX-thickness*2.0)/2.0, posY-(sizeY-thickness*2.0)/2.0,
+                sizeX-thickness*2.0, sizeY-thickness*2.0, roundness-thickness, roundness-thickness);
     }
     public void SetTextFieldColor(Color color)
     {
@@ -315,9 +326,6 @@ public class MenuInputField extends RenderObject implements Button
     }
     public void Render(Graphics g) {
         button.Render(g);
-        //TODO render text area
-        RoundRectangle2D.Double rect = new RoundRectangle2D.Double(posX-(sizeX-thickness*2.0)/2.0, posY-(sizeY-thickness*2.0)/2.0,
-                sizeX-thickness*2.0, sizeY-thickness*2.0, roundness-thickness, roundness-thickness);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(textFieldColor);
         g2d.fill(rect);

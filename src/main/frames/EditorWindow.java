@@ -127,7 +127,7 @@ public class EditorWindow implements WindowFrame, SudokuController {
 
     public void run() {
         long delta;
-        long lastTick = 0, lastRender = 0, maxFps = 30, minDelta = 1000 / maxFps;
+        long lastTick = 0, lastRender = 0, maxFps = 60, minDelta = 1000 / maxFps;
         boolean tr = true;
 
         while (isRunning) {
@@ -179,7 +179,6 @@ public class EditorWindow implements WindowFrame, SudokuController {
                 filePath = null;
             }
         }
-
         dimensionX = board.GetWidth();
         dimensionY = board.GetHeight();
         ConstructBoard();

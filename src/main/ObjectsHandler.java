@@ -1,11 +1,11 @@
 package main;
 
+import main.ui.*;
 import main.ui.Button;
-import main.ui.MenuButton;
-import main.ui.MenuScrollWindow;
-import main.ui.RenderObject;
 
 import java.awt.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 public class ObjectsHandler extends RenderObject
@@ -14,6 +14,11 @@ public class ObjectsHandler extends RenderObject
     private ArrayList<RenderObject> buttons;
     private Queue<RenderObject> changeQueue;
     protected Button draggedObject;
+    private MenuLabel fpsLabel;
+    private DecimalFormat format = new DecimalFormat("###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private long st = 0;
+
+    private static final boolean DEBUG = false;
 
     public ObjectsHandler()
     {
@@ -21,6 +26,12 @@ public class ObjectsHandler extends RenderObject
         buttons = new ArrayList<>();
         changeQueue = new ArrayDeque<>();
         draggedObject = null;
+
+        if(DEBUG) {
+            fpsLabel = new MenuLabel(5, 5);
+            fpsLabel.SetColor(new Color(0, 0, 0));
+            fpsLabel.SetAlignment(MenuLabel.Alignment.Left);
+        }
     }
 
     public void Tick(double delta)
@@ -29,11 +40,16 @@ public class ObjectsHandler extends RenderObject
             ro.Tick(delta);
     }
 
-    public void Render(Graphics g)
-    {
-        for(RenderObject ro : objects) {
+    public void Render(Graphics g) {
+        for (RenderObject ro : objects) {
             if (ro.GetVisibility())
                 ro.Render(g);
+        }
+        if (DEBUG){
+            long tm = System.currentTimeMillis() - st;
+            fpsLabel.SetText(format.format(1000.0 / tm));
+            fpsLabel.Render(g);
+            st = System.currentTimeMillis();
         }
     }
 

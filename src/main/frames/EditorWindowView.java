@@ -2,6 +2,7 @@ package main.frames;
 
 import main.FileLoader;
 import main.ObjectsHandler;
+import main.UserSettings;
 import main.Window;
 import main.sudoku.Board;
 import main.sudoku.SudokuView;
@@ -60,6 +61,8 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
     private MenuButton addElementButton;
     private MenuGroup addElementWindow;
 
+    private boolean settingsAntialias = true;
+
     public EditorWindowView(EditorWindow pres, Window window, int width, int height) {
         this.pres = pres;
         this.window = window;
@@ -68,6 +71,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
         style.LoadPalette(loader);
         style.SetSize(width, height);
         style.GenerateShapes();
+        settingsAntialias = UserSettings.getInstance().GetAntialias();
         inputManager = new InputManager(window, this);
         this.window = window;
         handler = new ObjectsHandler();
@@ -75,7 +79,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
 
         this.width = width;
         this.height = height;
-        background = loader.ReadImage("background.jpg").getScaledInstance(width, height, 0);
+        background = loader.LoadBackground().getScaledInstance(width, height, 0);
 
         selectedField = null;
 
@@ -280,7 +284,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
         MenuButton loadButton, saveButton, saveAsButton;
         loadButton = new MenuButton(style.GetTransform(new UITransform(65, 20, 120, 35), Style.Anchor.Upper_Left),
                 style.GetScaled(10));
-        style.SetButtonColors(loadButton, 4);
+        style.SetButtonColors(loadButton, 1);
         loadButton.SetText("Menu");
         loadButton.SetTextStyle(style.GetFont(5));
         loadButton.SetAction(() -> pres.MainMenu(), 0);
@@ -288,7 +292,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
 
         saveButton = new MenuButton(style.GetTransform(new UITransform(65, 60, 120, 35), Style.Anchor.Upper_Left),
                 style.GetScaled(10));
-        style.SetButtonColors(saveButton, 4);
+        style.SetButtonColors(saveButton, 1);
         saveButton.SetText("Save");
         saveButton.SetTextStyle(style.GetFont(5));
         saveButton.SetAction(() -> pres.Save(), 0);
@@ -296,7 +300,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
 
         saveAsButton = new MenuButton(style.GetTransform(new UITransform(65, 100, 120, 35), Style.Anchor.Upper_Left),
                 style.GetScaled(10));
-        style.SetButtonColors(saveAsButton, 4);
+        style.SetButtonColors(saveAsButton, 1);
         saveAsButton.SetText("Save As");
         saveAsButton.SetTextStyle(style.GetFont(5));
         saveAsButton.SetAction(() -> pres.SaveAs(), 0);
@@ -560,6 +564,12 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
             return;
         }
         Graphics g = bs.getDrawGraphics();
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                (settingsAntialias)? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF));
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g.drawImage(background, 0, 0, null);
 
         handler.Render(g);
@@ -828,7 +838,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
     }
     public void ToggleGraphic(int index, boolean state)
     {
-        style.SetButtonColors(graphicButtons.get(index).GetToggleButton(), (state) ? 0 : 1);
+        style.SetButtonColors(graphicButtons.get(index).GetToggleButton(), (state) ? 1 : 6);
         graphics.get(index).SetVisibility(state);
     }
     public void SelectGraphic(int index)
@@ -846,13 +856,18 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
         constraintButtons.get(index).SetColor(style.GetColor(Style.ColorPalette.Body3.value-1));
     }
     public void ToggleConstraint(int index, boolean state) {
-        style.SetButtonColors(constraintButtons.get(index).GetToggleButton(), (state) ? 2 : 3);
+        style.SetButtonColors(constraintButtons.get(index).GetToggleButton(), (state) ? 3 : 7);
         constraints.get(index).SetVisibility(state);
     }
     public BufferedImage RenderBoard()
     {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         ArrayList<RenderObject> graphics = new ArrayList<>();
         graphics.addAll(this.graphics);
         graphics.addAll(this.constraints);
@@ -865,7 +880,7 @@ public class EditorWindowView extends Canvas implements SudokuView, MenuView {
                 if (!renderedBoard) {
                     for(int i = 0; i < dimensionX; i++) {
                         for(int j = 0; j < dimensionY; j++) {
-                            if(cells[i][j].GetVisibility())
+                            if(cells[i][j].GetVisibility() && !cells[i][j].GetOutside())
                                 cells[i][j].Render(g);
                         }
                     }

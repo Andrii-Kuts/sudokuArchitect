@@ -87,6 +87,10 @@ public class UICell extends RenderObject implements Button
     public void SetOutside(boolean state){
         isOutside = state;
     }
+    public boolean GetOutside()
+    {
+        return isOutside;
+    }
 
     public UITransform GetTransform()
     {
@@ -136,11 +140,6 @@ public class UICell extends RenderObject implements Button
 
         double x = posX - sizeX/2.0, y = posY - sizeY/2.0;
 
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
         Rectangle2D.Double rect = new Rectangle2D.Double(x, y, sizeX, sizeY);
         if(isOutside) {
             g2d.setColor(new Color(2, 2, 2, 161));
@@ -152,7 +151,7 @@ public class UICell extends RenderObject implements Button
                 g2d.fill(rect);
             } else {
                 Area rectArea = new Area(rect);
-                double len = 360.0 / colors.length, ang = 100;
+                double len = 360.0 / colors.length, ang = -30;
                 for (int i = 0; i < colors.length; i++) {
                     Arc2D arc = new Arc2D.Double(Arc2D.PIE);
                     arc.setFrame(posX - sizeX, posY - sizeY, sizeX * 2, sizeY * 2);

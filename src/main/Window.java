@@ -64,6 +64,16 @@ public class Window extends Canvas
         return fullscreen;
     }
 
+    public void SetScreenSize(int width, int height)
+    {
+        this.width = width;
+        this.height = height;
+    }
+    public void SetFullscreen(boolean state)
+    {
+        fullscreen = state;
+    }
+
     public JFrame getFrame()
     {
         return frame;
@@ -89,6 +99,12 @@ public class Window extends Canvas
         frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
     }
 
+    public void ReloadMainMenu()
+    {
+        StopFrame();
+        UpdateWindowFormat();
+        RunFrame(new MainMenu(width, height, this, true));
+    }
     public void LoadMainMenu()
     {
         StopFrame();
